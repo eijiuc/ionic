@@ -153,7 +153,7 @@ export class Segment implements ComponentInterface {
     const activated = this.activated;
     const buttons = this.getButtons();
     const value = this.value;
-    const index = buttons.findIndex(button => button.value ===value);
+    const index = buttons.findIndex(button => button.value === value);
 
     // If there is no indicator rendered or there is no checked button
     // then don't move the indicator's position
@@ -279,6 +279,7 @@ export class Segment implements ComponentInterface {
 
   render() {
     const mode = getIonMode(this);
+
     return (
       <Host
         class={{
