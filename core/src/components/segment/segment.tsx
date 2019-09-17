@@ -22,6 +22,8 @@ export class Segment implements ComponentInterface {
   private indicatorEl!: HTMLDivElement | undefined;
   private nextIndex?: number;
 
+  private didInit = false;
+
   @Element() el!: HTMLIonSegmentElement;
 
   @State() activated = false;
@@ -48,6 +50,14 @@ export class Segment implements ComponentInterface {
    */
   @Prop({ mutable: true }) value?: string | null;
 
+  @Watch('value')
+  protected valueChanged(value: string | undefined) {
+    if (this.didInit) {
+      this.updateButtons();
+      this.ionChange.emit({ value });
+    }
+  }
+
   /**
    * Emitted when the value property has changed.
    */
@@ -55,6 +65,7 @@ export class Segment implements ComponentInterface {
 
   /**
    * Emitted when the styles change.
+   * @internal
    */
   @Event() ionStyle!: EventEmitter<StyleEventDetail>;
 
@@ -81,14 +92,19 @@ export class Segment implements ComponentInterface {
     this.emitStyle();
   }
 
-  async componentDidLoad() {
-    if (this.value == null) {
+  connectedCallback() {
+    if (this.value === undefined) {
       const checked = this.getButtons().find(b => b.checked);
       if (checked) {
         this.value = checked.value;
       }
     }
+    this.emitStyle();
+  }
+
+  componentDidLoad() {
     this.updateButtons();
+    this.didInit = true;
 
     this.gesture = (await import('../../utils/gesture')).createGesture({
       el: this.el,

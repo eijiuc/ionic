@@ -36,7 +36,7 @@ It's important to note that ion-header needs to be the one of the three root ele
 import React from 'react';
 import { IonHeader, IonContent, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/react';
 
-export const HeaderExample: React.FunctionComponent = () => (
+export const HeaderExample: React.FC = () => (
   <>
     <IonHeader>
       <IonToolbar>
@@ -62,6 +62,7 @@ export const HeaderExample: React.FunctionComponent = () => (
 
 | Property      | Attribute     | Description                                                                                                                                                                                                                                                                                                                           | Type            | Default     |
 | ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------- |
+| `collapse`    | `collapse`    | If `true`, the header will collapse on scroll of the content. Only applies in `ios` mode.                                                                                                                                                                                                                                             | `boolean`       | `false`     |
 | `mode`        | `mode`        | The mode determines which platform styles to use.                                                                                                                                                                                                                                                                                     | `"ios" \| "md"` | `undefined` |
 | `translucent` | `translucent` | If `true`, the header will be translucent. Only applies when the mode is `"ios"` and the device supports [`backdrop-filter`](https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter#Browser_compatibility).  Note: In order to scroll content behind the header, the `fullscreen` attribute needs to be set on the content. | `boolean`       | `false`     |
 
