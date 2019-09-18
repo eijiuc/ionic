@@ -50,14 +50,6 @@ export class Segment implements ComponentInterface {
    */
   @Prop({ mutable: true }) value?: string | null;
 
-  @Watch('value')
-  protected valueChanged(value: string | undefined) {
-    if (this.didInit) {
-      this.updateButtons();
-      this.ionChange.emit({ value });
-    }
-  }
-
   /**
    * Emitted when the value property has changed.
    */
@@ -70,9 +62,11 @@ export class Segment implements ComponentInterface {
   @Event() ionStyle!: EventEmitter<StyleEventDetail>;
 
   @Watch('value')
-  valueChanged(value: string | undefined) {
-    this.updateButtons();
-    this.ionChange.emit({ value });
+  protected valueChanged(value: string | undefined) {
+    if (this.didInit) {
+      this.updateButtons();
+      this.ionChange.emit({ value });
+    }
   }
 
   @Watch('disabled')
@@ -102,7 +96,7 @@ export class Segment implements ComponentInterface {
     this.emitStyle();
   }
 
-  componentDidLoad() {
+  async componentDidLoad() {
     this.updateButtons();
     this.didInit = true;
 
