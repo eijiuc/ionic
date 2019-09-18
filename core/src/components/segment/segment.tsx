@@ -164,6 +164,7 @@ export class Segment implements ComponentInterface {
   }
 
   private calculateIndicatorPosition() {
+    const isRTL = document.dir === 'rtl';
     const mode = getIonMode(this);
     const indicator = this.indicatorEl;
     const activated = this.activated;
@@ -187,7 +188,7 @@ export class Segment implements ComponentInterface {
     }
 
     // Transform the indicator based on the index of the button
-    const left = `${(index * 100)}%`;
+    const left = isRTL ? `-${(index * 100)}%` : `${(index * 100)}%`;
     const width = `calc(${100 / buttons.length}%)`;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -212,6 +213,7 @@ export class Segment implements ComponentInterface {
   }
 
   private setNextIndex(detail: GestureDetail, isEnd: boolean) {
+    const isRTL = document.dir === 'rtl';
     const activated = this.activated;
     const buttons = this.getButtons();
     const index = this.nextIndex !== undefined ? this.nextIndex : buttons.findIndex(button => button.checked === true);
@@ -231,21 +233,29 @@ export class Segment implements ComponentInterface {
 
     let nextIndex = this.nextIndex;
 
+    const decreaseIndex = isRTL ? currentX > (left + width) : currentX < left;
+    const increaseIndex = isRTL ? currentX < left : currentX > (left + width);
+
     // If the indicator is currently activated then we have started the gesture
     // on top of the checked button so we need to slide the indicator
     // by checking the button next to it as we move
     if (activated && !isEnd) {
-      if (currentX < left) {
+      // Decrease index, move left in LTR & right in RTL
+      if (decreaseIndex) {
         const newIndex = index - 1;
 
         if (newIndex >= 0) {
           nextIndex = newIndex;
         }
-      } else if (currentX > (left + width)) {
-        const newIndex = index + 1;
+      // Increase index, moves right in LTR & left in RTL
+      } else if (increaseIndex) {
+        if (activated && !isEnd) {
 
-        if (newIndex < buttons.length) {
-          nextIndex = newIndex;
+          const newIndex = index + 1;
+
+          if (newIndex < buttons.length) {
+            nextIndex = newIndex;
+          }
         }
       }
     }
@@ -253,15 +263,15 @@ export class Segment implements ComponentInterface {
     // If the indicator is not activated then we will just set the indicator
     // where the gesture ended
     if (!activated && isEnd) {
-      if (currentX < left) {
-        const diff = Math.ceil((left - currentX) / width);
+      if (decreaseIndex) {
+        const diff = Math.abs(Math.ceil((left - currentX) / width));
         const newIndex = index - diff;
 
         if (newIndex >= 0) {
           nextIndex = newIndex;
         }
-      } else if (currentX > (left + width)) {
-        const diff = Math.floor((currentX - left) / width);
+      } else if (increaseIndex) {
+        const diff = Math.abs(Math.floor((currentX - left) / width));
         const newIndex = index + diff;
 
         if (newIndex < buttons.length) {
